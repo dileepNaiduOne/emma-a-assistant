@@ -1,0 +1,7 @@
+--> time table -- Done
+--> faculty names as per time table
+--> show progess card
+--> hall ticket window
+--> Open college website
+--> Open Netflix or Youtube
+Emma - A virtual assistant for students
