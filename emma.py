@@ -11,10 +11,11 @@ from selenium.webdriver.chrome.options import Options
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
-engine.setProperty("voice", voices[4].id)
+engine.setProperty("voice", voices[1].id)
 engine.setProperty("rate", 130)
 
-path = "C:\Program Files (x86)\chromedriver.exe"
+
+path = "C:\SOFTWARES\chromedriver_win32\chromedriver.exe"
 WINDOW_SIZE = "1920,1080"
 
 chrome_options = Options()
@@ -36,7 +37,7 @@ roll_no = input().upper()
 student_data = pd.read_csv("students_details.csv")
 student_data.set_index("Roll Numbers", inplace = True)
 try:
-    naame = list(student_data.loc[roll_no])[0].split()[0]
+    naame = list(student_data.loc[roll_no])[0].split()
 except:
     naame = None
     say_out_loud("Sorry, I don't have your data with me, do check once again what you have typed in")
@@ -132,6 +133,17 @@ while True:
         say_out_loud("searching on Google...")
         driver.find_element(By.NAME, "q").send_keys(query)
         driver.find_element_by_name("q").send_keys(Keys.ENTER)
+#----------------------------------------------------------------------------------------------------
+
+#----------------------------------------open youtube--------------------------------------------
+    elif ("youtube about" in query):
+        query = query.replace("youtube about", "").strip()
+
+        driver = webdriver.Chrome(path)
+        driver.get("https://www.youtube.com/")
+        say_out_loud("searching on youtube...")
+        driver.find_element(By.NAME, "search_query").send_keys(query)
+        driver.find_element_by_name("search_query").send_keys(Keys.ENTER)
 #----------------------------------------------------------------------------------------------------
 
 #---------------------------------------Dictate------------------------------------------------------
