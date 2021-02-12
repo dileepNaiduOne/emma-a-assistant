@@ -94,7 +94,7 @@ gap = False
 while True:
 #---------------------------------Intro-------------------------------------------------------
     if flag == 0:
-        say_out_loud("hello {}, i'm, emma. What you what me to do?".format(naame))
+        say_out_loud("hello {}, i'm, emma. What you what me to do? To know what all I can do, just say, what you can do?".format(naame))
     elif gap:
         say_out_loud("Is there anything else that you what me to do? If so just say, Emma, to wake me up. Till then I will take a nap, or else say, Quit, to stop me")
         wakeup()
@@ -124,6 +124,10 @@ while True:
         gap = False
 #-------------------------------------------------------------------------------------
 
+    elif ("college" in query) and ("study" in query):
+        say_out_loud("You are studying in M,L,R,I,T, college, which means Mallareddy Institute, no no, sorry, Marri Laxman reddy Institute of Technology")
+        gap = False
+
 #---------------------------------Say Time Table--------------------------------------
     elif (("say" in query) or ("se" in query) or ("show" in query)) and ("time table" in query):
         if 0<=day<=6:
@@ -140,11 +144,13 @@ while True:
     elif ('who are you' in query):
         say_out_loud("I am emma. A virtual assistant for Students. To know what all I can do, ask me...")
         gap = False
+
 #------------------------------------------Info-----------------------------------------
-    elif ('what is your name' in query) or ('should i call you' in query):
+    elif ('what is your name' in query) or ('should i call you' in query) or (('who' in query) and ('created' in query)):
         say_out_loud("Technically I am, emma. You can call me with this name. But, Dileep calls me, May, Srinivas calls me, Sunday, and, Emma, is named by Madhav and Karthik. So majority decided my name as emma. By the way these 4 people, made me.")
         gap = False
 #---------------------------------------------------------------------------------------
+
     elif ((("not" in query) or ("don't" in query) or ("do not" in query) or (("not" in query) and ("intrested" in query))) and (("attend" in query) or ("go to class" in query))) or ("demotivated" in query):
         say_out_loud('I have found something for you, {}'.format(naame))
         webbrowser.open('https://youtu.be/OYYLe268V-Q')
@@ -218,7 +224,7 @@ while True:
 
 #---------------------------------------Dictate------------------------------------------------------
     elif ("dictate" in query):
-        say_out_loud("Copy and Paste the text that you want me to dictate")
+        say_out_loud("Sure, Copy and Paste the text that you want me to dictate")
         to_say = input().strip().split()
         for i in range(0, len(to_say), 3):
             sentence = " ".join([to_say[i], to_say[i+1], to_say[i+2]])
