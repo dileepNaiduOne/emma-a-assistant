@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import webbrowser
 from selenium.webdriver.chrome.options import Options
 import speech_recognition as sr
+from time import sleep
 
 
 engine = pyttsx3.init("sapi5")
@@ -119,7 +120,8 @@ while True:
 
 #----------------------------what emma can do------------------------------------------
     elif (('you' in query) and ('can do' in query)) or ('your features' in query):
-        say_out_loud("{} I can do lot of things!. I can say your time table. I can login into your college website and show your all semester marks. I can dictate your record, so that it becomes easy to write down. I can search anything in Google or Youtube. I can open MLRIT website. And many more... Note this {}, If you want me to saerch in Google or youtube you need to say, Google about, or, Youtube about, after that the keywords that you want me to search".format(naame, naame))
+        say_out_loud("{} I can do lot of things!. I can say your time table. I can login into your college website and show your all semester marks. I can dictate your record, so that it becomes easy to write down. I can search anything in Google or Youtube. I can open M,L,R,I,T website. And many more... Note this {}, If you want me to saerch in Google or youtube you need to say, Google about, or, Youtube about, after that the keywords that you want me to search".format(naame, naame))
+        gap = False
 #-------------------------------------------------------------------------------------
 
 #---------------------------------Say Time Table--------------------------------------
@@ -135,12 +137,19 @@ while True:
         gap = False
 #---------------------------------------------------------------------------------------
 
+    elif ('who are you' in query):
+        say_out_loud("I am emma. A virtual assistant for Students. To know what all I can do, ask me...")
+        gap = False
 #------------------------------------------Info-----------------------------------------
-    elif ('what is your name' in query) or ('who are you' in query) or ('should i call you' in query):
+    elif ('what is your name' in query) or ('should i call you' in query):
         say_out_loud("Technically I am, emma. You can call me with this name. But, Dileep calls me, May, Srinivas calls me, Sunday, and, Emma, is named by Madhav and Karthik. So majority decided my name as emma. By the way these 4 people, made me.")
         gap = False
 #---------------------------------------------------------------------------------------
-
+    elif ((("not" in query) or ("don't" in query) or ("do not" in query) or (("not" in query) and ("intrested" in query))) and (("attend" in query) or ("go to class" in query))) or ("demotivated" in query):
+        say_out_loud('I have found something for you, {}'.format(naame))
+        webbrowser.open('https://youtu.be/OYYLe268V-Q')
+        sleep(66)
+        gap = False
 #--------------------------------------------------show marks---------------------------------------
     elif ("show" in query) and (("marks" in query) or ("report card" in query) or ("progress card" in query)):
         driver = webdriver.Chrome(executable_path= path, chrome_options=chrome_options)
