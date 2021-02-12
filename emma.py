@@ -8,14 +8,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import webbrowser
 from selenium.webdriver.chrome.options import Options
+import speech_recognition as sr
+
 
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
-engine.setProperty("voice", voices[1].id)
+engine.setProperty("voice", voices[4].id)
 engine.setProperty("rate", 130)
 
 
-path = "C:\SOFTWARES\chromedriver_win32\chromedriver.exe"
+path = "C:\Program Files (x86)\chromedriver.exe"
 WINDOW_SIZE = "1920,1080"
 
 chrome_options = Options()
@@ -24,6 +26,49 @@ chrome_options.add_argument("--window-size=%s" % WINDOW_SIZE)
 def say_out_loud(text):
     engine.say(text)
     engine.runAndWait()
+
+def listening():
+    count = 0
+    while count < 3:
+        a = sr.Recognizer()
+        with sr.Microphone() as source:
+            say_out_loud("I'm listening, tell")
+            a.pause_threshold = 0.8
+            audio = a.listen(source)
+            
+        
+        try:
+            say_out_loud("sensing...")
+            said = a.recognize_google(audio, language="en-in")
+            # print(query)
+        except:
+            if count == 2:
+                say_out_loud("Sorry, I didn't get what you are trying to say. Bye")
+                quit()
+            say_out_loud("I didn't get what you are trying to say, repeat it once again")
+            count += 1
+            continue
+        return said
+
+def wakeup():
+    while True:
+        a = sr.Recognizer()
+        with sr.Microphone() as source:
+            a.pause_threshold = 0.5
+            audio = a.listen(source)
+            
+    
+        try:
+            said = a.recognize_google(audio, language="en-in")
+            if ('emma' in said.lower()) or ('hema' in said.lower()) or ('amma' in said.lower()) or ('imam' in said.lower()) or ('mr' in said.lower()):
+                say_out_loud("Yes tell me, {}".format(naame))
+                break
+            elif ("stop" in said.lower()) or ("bye" in said.lower()) or ("quit" in said.lower()) or ("thank you" in said.lower()) or ("exit" in said.lower()):
+                say_out_loud("See you soon {}. Bye".format(naame))
+                quit()
+        except:
+            pass
+
 
 #----------------------------Get todays day-------------------------------------------
 # day = datetime.today().strftime("%A")
@@ -37,38 +82,48 @@ roll_no = input().upper()
 student_data = pd.read_csv("students_details.csv")
 student_data.set_index("Roll Numbers", inplace = True)
 try:
-    naame = list(student_data.loc[roll_no])[0].split()
+    naame = list(student_data.loc[roll_no])[0].split()[0]
 except:
-    naame = None
     say_out_loud("Sorry, I don't have your data with me, do check once again what you have typed in")
     quit()
 #------------------------------------------------------------------------------------
 
 flag = 0
+gap = False
 while True:
 #---------------------------------Intro-------------------------------------------------------
     if flag == 0:
-        say_out_loud("hello {}, What you what me to do?".format(naame))
+        say_out_loud("hello {}, i'm, emma. What you what me to do?".format(naame))
+    elif gap:
+        say_out_loud("Is there anything else that you what me to do? If so just say, Emma, to wake me up. Till then I will take a nap, or else say, Quit, to stop me")
+        wakeup()
     else:
-        say_out_loud("Is there anything else that you what me to do? If so just type in, or else type, Quit")
+        say_out_loud("Is there anything else that you what me to do? If so just say, or else say, Quit, to stop me")
 #----------------------------------------------------------------------------------------------
 
 #---------------------Query input--------------------------------------------------------------
-    query = input().lower()
+    query = listening().lower()
+    # print(query)
+    # say_out_loud('I heard, {}'.format(query))
 #----------------------------------------------------------------------------------------------
 
-    flag = 1
-    if ("stop" in query) or ("bye" in query) or ("quit" in query):
-        say_out_loud("See you soon {}. Bye".format(naame))
-        break
-    
 #----------------------------time table data------------------------------------------
     df = pd.read_csv('time table.csv')
     df.set_index("Day", inplace = True)
 #-------------------------------------------------------------------------------------
 
+    flag = 1
+    if ("stop" in query) or ("bye" in query) or ("quit" in query) or ("thank you" in query):
+        say_out_loud("See you soon {}. Bye".format(naame))
+        quit()
+
+#----------------------------what emma can do------------------------------------------
+    elif (('you' in query) and ('can do' in query)) or ('your features' in query):
+        say_out_loud("{} I can do lot of things!. I can say your time table. I can login into your college website and show your all semester marks. I can dictate your record, so that it becomes easy to write down. I can search anything in Google or Youtube. I can open MLRIT website. And many more... Note this {}, If you want me to saerch in Google or youtube you need to say, Google about, or, Youtube about, after that the keywords that you want me to search".format(naame, naame))
+#-------------------------------------------------------------------------------------
+
 #---------------------------------Say Time Table--------------------------------------
-    if ("say" in query) and ("time table" in query):
+    elif (("say" in query) or ("se" in query) or ("show" in query)) and ("time table" in query):
         if 0<=day<=6:
             todayy = dict(df.iloc[day,:])
             timee = list(todayy.keys())
@@ -77,11 +132,13 @@ while True:
             say_out_loud(textt)
         else:
             engine.say("I know you are Topper but, Its Holiday!!")
+        gap = False
 #---------------------------------------------------------------------------------------
 
 #------------------------------------------Info-----------------------------------------
     elif ('what is your name' in query) or ('who are you' in query) or ('should i call you' in query):
         say_out_loud("Technically I am, emma. You can call me with this name. But, Dileep calls me, May, Srinivas calls me, Sunday, and, Emma, is named by Madhav and Karthik. So majority decided my name as emma. By the way these 4 people, made me.")
+        gap = False
 #---------------------------------------------------------------------------------------
 
 #--------------------------------------------------show marks---------------------------------------
@@ -116,12 +173,14 @@ while True:
 
         second = driver.find_element_by_id("lnkOverallMarks")
         second.click()
+        gap = True
 #----------------------------------------------------------------------------------------------------
 
 #--------------------------------------open college website------------------------------------------
-    elif ("open" in query) and ("college website" in query):
+    elif (("open" in query) or ("show" in query)) and (("college website" in query) or ("mlr it" in query) or ("mlrit" in query)):
         webbrowser.open('https://mlrinstitutions.ac.in/')
         say_out_loud('opening M,L,R,I,T website...')
+        gap = True
 #----------------------------------------------------------------------------------------------------
 
 #----------------------------------------search in google--------------------------------------------
@@ -133,6 +192,7 @@ while True:
         say_out_loud("searching on Google...")
         driver.find_element(By.NAME, "q").send_keys(query)
         driver.find_element_by_name("q").send_keys(Keys.ENTER)
+        gap = True
 #----------------------------------------------------------------------------------------------------
 
 #----------------------------------------open youtube--------------------------------------------
@@ -144,6 +204,7 @@ while True:
         say_out_loud("searching on youtube...")
         driver.find_element(By.NAME, "search_query").send_keys(query)
         driver.find_element_by_name("search_query").send_keys(Keys.ENTER)
+        gap = True
 #----------------------------------------------------------------------------------------------------
 
 #---------------------------------------Dictate------------------------------------------------------
@@ -160,8 +221,10 @@ while True:
             say_out_loud(to_say[i+2])
             engine.setProperty("rate", 130)
             say_out_loud(sentence)
+        gap = False
 #----------------------------------------------------------------------------------------------------
 
     else:
         say_out_loud("Sorry, I don't understand what you are asking.")
+        gap = False
 
